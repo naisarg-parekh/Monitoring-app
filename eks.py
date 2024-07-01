@@ -46,10 +46,11 @@ api_instance.create_namespaced_deployment(
 
 # Define the service
 service = client.V1Service(
-    metadata=client.V1ObjectMeta(name="my-flask-service"),
+    metadata=client.V1ObjectMeta(name="devops-project-service"),
     spec=client.V1ServiceSpec(
         selector={"app": "devops-project"},
-        ports=[client.V1ServicePort(port=5000)]
+        ports=[client.V1ServicePort(port=5000, target_port=5000, node_port=30007)],  # Change node_port if needed
+        type="NodePort"  # Set the service type to NodePort
     )
 )
 
