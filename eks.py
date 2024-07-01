@@ -1,5 +1,10 @@
-#create deployment and service
+import argparse
 from kubernetes import client, config
+
+# Parse command-line arguments
+parser = argparse.ArgumentParser(description='Create Kubernetes deployment and service.')
+parser.add_argument('--image', required=True, help='Docker image URI')
+args = parser.parse_args()
 
 # Load Kubernetes configuration
 config.load_kube_config()
@@ -9,21 +14,21 @@ api_client = client.ApiClient()
 
 # Define the deployment
 deployment = client.V1Deployment(
-    metadata=client.V1ObjectMeta(name="my-flask-app"),
+    metadata=client.V1ObjectMeta(name="devops-project"),
     spec=client.V1DeploymentSpec(
         replicas=1,
         selector=client.V1LabelSelector(
-            match_labels={"app": "my-flask-app"}
+            match_labels={"app": "devops-project"}
         ),
         template=client.V1PodTemplateSpec(
             metadata=client.V1ObjectMeta(
-                labels={"app": "my-flask-app"}
+                labels={"app": "devops-project"}
             ),
             spec=client.V1PodSpec(
                 containers=[
                     client.V1Container(
-                        name="my-flask-container",
-                        image="568373317874.dkr.ecr.us-east-1.amazonaws.com/my_monitoring_app_image:latest",
+                        name="live-demo",
+                        image=args.image,
                         ports=[client.V1ContainerPort(container_port=5000)]
                     )
                 ]
@@ -43,7 +48,7 @@ api_instance.create_namespaced_deployment(
 service = client.V1Service(
     metadata=client.V1ObjectMeta(name="my-flask-service"),
     spec=client.V1ServiceSpec(
-        selector={"app": "my-flask-app"},
+        selector={"app": "devops-project"},
         ports=[client.V1ServicePort(port=5000)]
     )
 )
